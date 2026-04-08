@@ -1,0 +1,13 @@
+{
+  "extends": "./tsconfig.base.json",
+  "files": [],
+  "references": [
+    { "path": "./packages/ui" },
+    { "path": "./packages/trpc" },
+    { "path": "./packages/prisma" },
+    { "path": "./packages/emails" },
+    { "path": "./packages/testing" },
+    { "path": "./apps/web" },
+    { "path": "./apps/api" }
+  ]
+}
