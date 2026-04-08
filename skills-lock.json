@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "skills": {
+    "ai-sdk": {
+      "source": "vercel/ai",
+      "sourceType": "github",
+      "computedHash": "81af098a4ce6f0e323c1bd02b8e79df3bbaed57cbf1c4060f58ddc95de5545a1"
+    },
+    "coss": {
+      "source": "cosscom/coss",
+      "sourceType": "github",
+      "computedHash": "7fc8b04e73c445d9463ce27d0719832ed5ca3cbe70c3ac20fe15848aae24180e"
+    }
+  }
+}
