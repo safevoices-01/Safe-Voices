@@ -1,0 +1,24 @@
+{
+  "name": "@safevoices/prisma",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "build": "tsc --noEmit",
+    "lint": "tsc --noEmit",
+    "typecheck": "tsc --noEmit",
+    "test": "node --test",
+    "prisma": "prisma",
+    "db:studio": "prisma studio"
+  },
+  "devDependencies": {
+    "prisma": "^7.7.0",
+    "typescript": "^5.9.2"
+  },
+  "dependencies": {
+    "@prisma/client": "^7.7.0"
+  }
+}
