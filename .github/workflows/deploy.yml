@@ -1,0 +1,296 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - development
+      - staging
+      - master
+    paths-ignore:
+      - '**.md'
+      - '.changeset/**'
+      - 'docs/**'
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: 'Environment to deploy to'
+        required: true
+        type: choice
+        options:
+          - development
+          - staging
+          - production
+      apps:
+        description: 'Apps to deploy (comma-separated: api,web,app,service)'
+        required: false
+        default: 'api,web,app,service'
+
+env:
+  NODE_VERSION: '20'
+  PNPM_VERSION: '9.0.0'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.inputs.environment || (github.ref_name == 'master' && 'production' || (github.ref_name == 'staging' && 'staging' || 'development')) }}
+  cancel-in-progress: false
+
+jobs:
+  determine-environment:
+    name: Determine Environment
+    runs-on: ubuntu-latest
+    outputs:
+      env: ${{ steps.set-env.outputs.env }}
+    steps:
+      - name: Set environment
+        id: set-env
+        run: |
+          if [ "${{ github.event.inputs.environment }}" != "" ]; then
+            echo "env=${{ github.event.inputs.environment }}" >> $GITHUB_OUTPUT
+          elif [ "${{ github.ref_name }}" == "master" ]; then
+            echo "env=production" >> $GITHUB_OUTPUT
+          elif [ "${{ github.ref_name }}" == "staging" ]; then
+            echo "env=staging" >> $GITHUB_OUTPUT
+          else
+            echo "env=development" >> $GITHUB_OUTPUT
+          fi
+
+  build:
+    name: Build for Deployment
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: ${{ env.PNPM_VERSION }}
+          run_install: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: 'pnpm'
+
+      - name: Setup Turborepo cache
+        uses: turborepo/cache-action@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install dependencies
+        run: pnpm install --frozen-lockfile
+
+      - name: Build all packages
+        run: pnpm build
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: production-build
+          path: |
+            apps/*/dist
+            apps/*/.next
+            packages/*/dist
+          retention-days: 7
+
+  deploy-api:
+    name: Deploy API
+    runs-on: ubuntu-latest
+    needs: [build, determine-environment]
+    environment:
+      name: ${{ needs.determine-environment.outputs.env }}
+      url: ${{ vars.API_URL }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: production-build
+          path: .
+
+      - name: Deploy to Coolify via API
+        env:
+          COOLIFY_API_URL: ${{ vars.COOLIFY_API_URL }}
+          COOLIFY_API_TOKEN: ${{ secrets.COOLIFY_API_TOKEN }}
+          COOLIFY_APP_UUID: ${{ secrets.COOLIFY_APP_UUID_API }}
+        run: |
+          if [ -z "$COOLIFY_API_TOKEN" ] || [ -z "$COOLIFY_APP_UUID" ]; then
+            echo "Coolify API token or application UUID not configured"
+            exit 1
+          fi
+          
+          echo "Triggering deployment for API application..."
+          response=$(curl -s -w "\n%{http_code}" -X GET \
+            "$COOLIFY_API_URL/api/v1/deploy?uuid=$COOLIFY_APP_UUID&force=false" \
+            -H "Authorization: Bearer $COOLIFY_API_TOKEN" \
+            -H "Content-Type: application/json")
+          
+          http_code=$(echo "$response" | tail -n1)
+          body=$(echo "$response" | sed '$d')
+          
+          if [ "$http_code" -eq 200 ] || [ "$http_code" -eq 201 ]; then
+            echo "✅ Deployment triggered successfully"
+            echo "$body"
+          else
+            echo "❌ Deployment failed with HTTP $http_code"
+            echo "$body"
+            exit 1
+          fi
+
+      - name: Deployment status
+        run: echo "API deployment triggered to ${{ needs.determine-environment.outputs.env }}"
+
+  deploy-web:
+    name: Deploy Web
+    runs-on: ubuntu-latest
+    needs: [build, determine-environment]
+    environment:
+      name: ${{ needs.determine-environment.outputs.env }}
+      url: ${{ vars.WEB_URL }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: production-build
+          path: .
+
+      - name: Deploy to Coolify via API
+        env:
+          COOLIFY_API_URL: ${{ vars.COOLIFY_API_URL }}
+          COOLIFY_API_TOKEN: ${{ secrets.COOLIFY_API_TOKEN }}
+          COOLIFY_APP_UUID: ${{ secrets.COOLIFY_APP_UUID_WEB }}
+        run: |
+          if [ -z "$COOLIFY_API_TOKEN" ] || [ -z "$COOLIFY_APP_UUID" ]; then
+            echo "Coolify API token or application UUID not configured"
+            exit 1
+          fi
+          
+          echo "Triggering deployment for Web application..."
+          response=$(curl -s -w "\n%{http_code}" -X GET \
+            "$COOLIFY_API_URL/api/v1/deploy?uuid=$COOLIFY_APP_UUID&force=false" \
+            -H "Authorization: Bearer $COOLIFY_API_TOKEN" \
+            -H "Content-Type: application/json")
+          
+          http_code=$(echo "$response" | tail -n1)
+          body=$(echo "$response" | sed '$d')
+          
+          if [ "$http_code" -eq 200 ] || [ "$http_code" -eq 201 ]; then
+            echo "Deployment triggered successfully"
+            echo "$body"
+          else
+            echo "Deployment failed with HTTP $http_code"
+            echo "$body"
+            exit 1
+          fi
+
+      - name: Deployment status
+        run: echo "Web deployment triggered to ${{ needs.determine-environment.outputs.env }}"
+
+  deploy-app:
+    name: Deploy App
+    runs-on: ubuntu-latest
+    needs: [build, determine-environment]
+    environment:
+      name: ${{ needs.determine-environment.outputs.env }}
+      url: ${{ vars.APP_URL }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: production-build
+          path: .
+
+      - name: Deploy to Coolify via API
+        env:
+          COOLIFY_API_URL: ${{ vars.COOLIFY_API_URL }}
+          COOLIFY_API_TOKEN: ${{ secrets.COOLIFY_API_TOKEN }}
+          COOLIFY_APP_UUID: ${{ secrets.COOLIFY_APP_UUID_APP }}
+        run: |
+          if [ -z "$COOLIFY_API_TOKEN" ] || [ -z "$COOLIFY_APP_UUID" ]; then
+            echo "Coolify API token or application UUID not configured"
+            exit 1
+          fi
+          
+          echo "Triggering deployment for App application..."
+          response=$(curl -s -w "\n%{http_code}" -X GET \
+            "$COOLIFY_API_URL/api/v1/deploy?uuid=$COOLIFY_APP_UUID&force=false" \
+            -H "Authorization: Bearer $COOLIFY_API_TOKEN" \
+            -H "Content-Type: application/json")
+          
+          http_code=$(echo "$response" | tail -n1)
+          body=$(echo "$response" | sed '$d')
+          
+          if [ "$http_code" -eq 200 ] || [ "$http_code" -eq 201 ]; then
+            echo "✅ Deployment triggered successfully"
+            echo "$body"
+          else
+            echo "❌ Deployment failed with HTTP $http_code"
+            echo "$body"
+            exit 1
+          fi
+
+      - name: Deployment status
+        run: echo "App deployment triggered to ${{ needs.determine-environment.outputs.env }}"
+
+  deploy-service:
+    name: Deploy Service
+    runs-on: ubuntu-latest
+    needs: [build, determine-environment]
+    environment:
+      name: ${{ needs.determine-environment.outputs.env }}
+      url: ${{ vars.SERVICE_URL }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: production-build
+          path: .
+
+      - name: Deploy to Coolify via API
+        env:
+          COOLIFY_API_URL: ${{ vars.COOLIFY_API_URL }}
+          COOLIFY_API_TOKEN: ${{ secrets.COOLIFY_API_TOKEN }}
+          COOLIFY_APP_UUID: ${{ secrets.COOLIFY_APP_UUID_SERVICE }}
+        run: |
+          if [ -z "$COOLIFY_API_TOKEN" ] || [ -z "$COOLIFY_APP_UUID" ]; then
+            echo "Coolify API token or application UUID not configured"
+            exit 1
+          fi
+          
+          echo "Triggering deployment for Service application..."
+          response=$(curl -s -w "\n%{http_code}" -X GET \
+            "$COOLIFY_API_URL/api/v1/deploy?uuid=$COOLIFY_APP_UUID&force=false" \
+            -H "Authorization: Bearer $COOLIFY_API_TOKEN" \
+            -H "Content-Type: application/json")
+          
+          http_code=$(echo "$response" | tail -n1)
+          body=$(echo "$response" | sed '$d')
+          
+          if [ "$http_code" -eq 200 ] || [ "$http_code" -eq 201 ]; then
+            echo "Deployment triggered successfully"
+            echo "$body"
+          else
+            echo "Deployment failed with HTTP $http_code"
+            echo "$body"
+            exit 1
+          fi
+
+      - name: Deployment status
+        run: echo "Service deployment triggered to ${{ needs.determine-environment.outputs.env }}"
