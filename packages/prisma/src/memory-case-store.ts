@@ -1,11 +1,13 @@
 import type {
     CaseAttachmentInput,
     CaseAttachmentRecord,
+    CaseMessageRecord,
     CaseSessionRecord,
     CaseStore,
     CaseStatusValue,
     ChatPersistInput,
     ExtractionPatch,
+    MessageAttachmentRef,
     PartnerCaseDetail,
     PartnerCaseSummary,
     TransitionCaseStatusResult,
@@ -70,7 +72,12 @@ type MemoryCase = {
     legalHold: boolean;
     createdAt: Date;
     extraction: ExtractionPatch | null;
-    messages: Array<{ id: string; role: 'user' | 'assistant'; content: string }>;
+    messages: Array<{
+        id: string;
+        role: 'user' | 'assistant';
+        content: string;
+        attachments?: MessageAttachmentRef[];
+    }>;
     attachments: MemoryAttachment[];
 };
 
@@ -270,6 +277,10 @@ export class MemoryCaseStore implements CaseStore {
                 : crypto.randomUUID(),
             role: 'user',
             content: input.userContent,
+            attachments:
+                input.userAttachments && input.userAttachments.length > 0
+                    ? input.userAttachments
+                    : undefined,
         });
         record.messages.push({
             id: crypto.randomUUID(),
@@ -282,12 +293,7 @@ export class MemoryCaseStore implements CaseStore {
         return record.extraction;
     }
 
-    async listMessages(
-        caseId: string,
-        limit: number,
-    ): Promise<
-        Array<{ id: string; role: 'user' | 'assistant'; content: string }>
-    > {
+    async listMessages(caseId: string, limit: number): Promise<CaseMessageRecord[]> {
         const record = findCase(caseId);
         if (!record) return [];
         return record.messages.slice(-limit);

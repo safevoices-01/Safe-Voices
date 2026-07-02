@@ -3,11 +3,13 @@ import { getPrisma } from './client';
 import type {
     CaseAttachmentInput,
     CaseAttachmentRecord,
+    CaseMessageRecord,
     CaseSessionRecord,
     CaseStore,
     CaseStatusValue,
     ChatPersistInput,
     ExtractionPatch,
+    MessageAttachmentRef,
     PartnerCaseDetail,
     PartnerCaseSummary,
     TransitionCaseStatusResult,
@@ -32,6 +34,26 @@ const LOCKOUT_MS = 10 * 60 * 1000;
 const networkAttempts = new Map<string, { count: number; resetAt: number }>();
 const NETWORK_LIMIT = Number(process.env.SAFEVOICES_NETWORK_VERIFY_LIMIT ?? '30');
 const NETWORK_WINDOW_MS = 15 * 60 * 1000;
+
+function parseStoredMessageAttachments(
+    value: unknown,
+): MessageAttachmentRef[] | undefined {
+    if (!Array.isArray(value) || value.length === 0) return undefined;
+    const parsed: MessageAttachmentRef[] = [];
+    for (const item of value) {
+        if (
+            item &&
+            typeof item === 'object' &&
+            typeof (item as MessageAttachmentRef).id === 'string' &&
+            typeof (item as MessageAttachmentRef).url === 'string' &&
+            typeof (item as MessageAttachmentRef).mimeType === 'string' &&
+            typeof (item as MessageAttachmentRef).name === 'string'
+        ) {
+            parsed.push(item as MessageAttachmentRef);
+        }
+    }
+    return parsed.length > 0 ? parsed : undefined;
+}
 
 function checkNetworkLimit(clientKey: string | undefined): boolean {
     if (!clientKey) return true;
@@ -253,6 +275,10 @@ export class PrismaCaseStore implements CaseStore {
                     role: 'user' as MessageRole,
                     content: input.userContent,
                     clientReqId: input.clientReqId ?? null,
+                    attachments:
+                        input.userAttachments && input.userAttachments.length > 0
+                            ? (input.userAttachments as Prisma.InputJsonValue)
+                            : undefined,
                 },
             }),
             getPrisma().caseMessage.create({
@@ -291,12 +317,7 @@ export class PrismaCaseStore implements CaseStore {
         return input.extraction ?? null;
     }
 
-    async listMessages(
-        caseId: string,
-        limit: number,
-    ): Promise<
-        Array<{ id: string; role: 'user' | 'assistant'; content: string }>
-    > {
+    async listMessages(caseId: string, limit: number): Promise<CaseMessageRecord[]> {
         const record = await getPrisma().case.findUnique({
             where: { trackingCode: caseId },
         });
@@ -310,6 +331,7 @@ export class PrismaCaseStore implements CaseStore {
             id: r.id,
             role: r.role as 'user' | 'assistant',
             content: r.content,
+            attachments: parseStoredMessageAttachments(r.attachments),
         }));
     }
 

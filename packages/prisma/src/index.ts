@@ -5,6 +5,8 @@ export { canTransitionCaseStatus, ALLOWED_STATUS_TRANSITIONS } from './case-life
 export type {
     CaseStore,
     CaseSessionRecord,
+    CaseMessageRecord,
+    MessageAttachmentRef,
     ExtractionPatch,
     VerifyResult,
     PartnerCaseSummary,

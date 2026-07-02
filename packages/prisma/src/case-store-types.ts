@@ -20,11 +20,26 @@ export type ExtractionPatch = {
     fields: Record<string, unknown>;
 };
 
+export type MessageAttachmentRef = {
+    id: string;
+    url: string;
+    mimeType: string;
+    name: string;
+};
+
+export type CaseMessageRecord = {
+    id: string;
+    role: 'user' | 'assistant';
+    content: string;
+    attachments?: MessageAttachmentRef[];
+};
+
 export type ChatPersistInput = {
     caseId: string;
     userContent: string;
     assistantContent: string;
     clientReqId?: string;
+    userAttachments?: MessageAttachmentRef[];
     extraction?: ExtractionPatch;
     crisisTriggered?: boolean;
     crisisTriggerType?: string;
@@ -86,16 +101,7 @@ export interface CaseStore {
     markCaseSubmitted(caseId: string): Promise<boolean>;
     getCaseStatus(caseId: string): Promise<CaseStatusValue | null>;
     appendChatTurn(input: ChatPersistInput): Promise<ExtractionPatch | null>;
-    listMessages(
-        caseId: string,
-        limit: number,
-    ): Promise<
-        Array<{
-            id: string;
-            role: 'user' | 'assistant';
-            content: string;
-        }>
-    >;
+    listMessages(caseId: string, limit: number): Promise<CaseMessageRecord[]>;
     getExtraction(caseId: string): Promise<ExtractionPatch | null>;
     listPartnerCases(input?: {
         status?: CaseStatusValue;
