@@ -1,7 +1,3 @@
-
-
-
-
 ### Safe Voices
 
 **Safevoices Engineering Specs.** A secure, privacy-first application for survivors to report sensitive incidents anonymously.
@@ -9,8 +5,6 @@
 This is a security-first anonymous reporting system, with a human-in-the-loop workflow, designed to be audit-ready and safe before any real user interaction. All features revolve around anonymity, encryption, and operational safety.
 
 **[Website »](https://thesafevoices.org)**
-
-
 
 ## About the Project
 
@@ -51,32 +45,42 @@ docker --version
 ### Setup
 
 1. Clone the repository (use your private remote URL)
-  ```sh
-   git clone <PRIVATE_REPO_URL>
-   cd safevoices
-  ```
+
+```sh
+ git clone <PRIVATE_REPO_URL>
+ cd safevoices
+```
+
 2. Install dependencies
-  ```sh
-   pnpm install
-  ```
+
+```sh
+ pnpm install
+```
+
 3. Configure environment files
-  - Copy example files:
+
+- Copy example files:
     - `apps/web/.env.example`
     - `apps/api/.env.example`
     - `packages/emails/.env.example`
     - `packages/prisma/.env.example`
-  - Fill values using `docs/env/README.md`.
+- Fill values using `docs/env/README.md`.
+
 4. Run env checks
-  ```sh
-   pnpm env-check:web
-   pnpm env-check:api
-   pnpm env-check:emails
-  ```
+
+```sh
+ pnpm env-check:web
+ pnpm env-check:api
+ pnpm env-check:emails
+```
+
 5. Start development
-  ```sh
-   pnpm dev
-  ```
-   Focused workflows: use `pnpm dev:web`, `pnpm dev:api`, and `pnpm dev:all` as needed (see **Scripts Reference** below).
+
+```sh
+ pnpm dev
+```
+
+Focused workflows: use `pnpm dev:web`, `pnpm dev:api`, and `pnpm dev:all` as needed (see **Scripts Reference** below).
 
 ## Project Structure
 
@@ -127,10 +131,10 @@ Use local workspace packages:
 
 ```json
 {
-  "dependencies": {
-    "@safevoices/ui": "workspace:*",
-    "@safevoices/trpc": "workspace:*"
-  }
+    "dependencies": {
+        "@safevoices/ui": "workspace:*",
+        "@safevoices/trpc": "workspace:*"
+    }
 }
 ```
 
@@ -255,15 +259,19 @@ pnpm changeset status
 ## Contributing
 
 1. Clone from your private remote and create a branch:
-  - `@username/feature-your-task`
-  - `@username/fix-your-bug-fix`
+
+- `@username/feature-your-task`
+- `@username/fix-your-bug-fix`
+
 2. Install dependencies: `pnpm install`
 3. Run checks before PR:
-  ```sh
-   pnpm lint
-   pnpm typecheck
-   pnpm test
-  ```
+
+```sh
+ pnpm lint
+ pnpm typecheck
+ pnpm test
+```
+
 4. Open PR with context and test notes.
 
 Conventional commit types:
