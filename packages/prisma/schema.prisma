@@ -1,0 +1,125 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+enum CaseStatus {
+  OPEN
+  SUBMITTED
+  UNDER_REVIEW
+  RESOLVED
+  CLOSED
+}
+
+enum IncidentCategory {
+  harassment
+  discrimination
+  fraud
+  safety
+  retaliation
+  data_breach
+  misconduct
+  other
+}
+
+enum RiskLevel {
+  low
+  medium
+  high
+  critical
+}
+
+enum MessageRole {
+  user
+  assistant
+  system
+}
+
+model Case {
+  id                  String            @id @default(cuid())
+  trackingCode        String            @unique
+  secretHash          String
+  secretSalt          String
+  caseStatus          CaseStatus        @default(OPEN)
+  incidentCategory    IncidentCategory?
+  incidentDescription String?
+  location            String?
+  occurredAt          DateTime?
+  riskLevel           RiskLevel?
+  submittedAt         DateTime?
+  failedAttempts      Int               @default(0)
+  lockedUntil         DateTime?
+  legalHold           Boolean           @default(false)
+  createdAt           DateTime          @default(now())
+  updatedAt           DateTime          @updatedAt
+  sessions            CaseSession[]
+  messages            CaseMessage[]
+  extractions         CaseExtraction[]
+  attachments         CaseAttachment[]
+  crisisEvents        CrisisEvent[]
+
+  @@index([caseStatus, createdAt])
+}
+
+model CaseSession {
+  id        String   @id @default(cuid())
+  caseId    String
+  tokenHash String   @unique
+  expiresAt DateTime
+  revokedAt DateTime?
+  createdAt DateTime @default(now())
+  case      Case     @relation(fields: [caseId], references: [id], onDelete: Cascade)
+
+  @@index([expiresAt])
+}
+
+model CaseMessage {
+  id          String      @id @default(cuid())
+  caseId      String
+  role        MessageRole
+  content     String
+  attachments Json?
+  clientReqId String?
+  createdAt   DateTime    @default(now())
+  case        Case        @relation(fields: [caseId], references: [id], onDelete: Cascade)
+
+  @@unique([caseId, clientReqId])
+  @@index([caseId, createdAt])
+}
+
+model CaseExtraction {
+  id            String   @id @default(cuid())
+  caseId        String
+  schemaVersion Int
+  payload       Json
+  updatedAt     DateTime @updatedAt
+  case          Case     @relation(fields: [caseId], references: [id], onDelete: Cascade)
+
+  @@unique([caseId])
+}
+
+model CaseAttachment {
+  id        String   @id @default(cuid())
+  caseId    String
+  url       String
+  mimeType  String
+  name      String
+  sizeBytes Int?
+  createdAt DateTime @default(now())
+  case      Case     @relation(fields: [caseId], references: [id], onDelete: Cascade)
+
+  @@index([caseId, createdAt])
+}
+
+model CrisisEvent {
+  id          String   @id @default(cuid())
+  caseId      String
+  triggerType String
+  createdAt   DateTime @default(now())
+  case        Case     @relation(fields: [caseId], references: [id], onDelete: Cascade)
+
+  @@index([caseId, createdAt])
+}

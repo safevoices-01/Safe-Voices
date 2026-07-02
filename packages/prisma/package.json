@@ -1,24 +1,36 @@
 {
-  "name": "@safevoices/prisma",
-  "version": "0.0.0",
-  "private": true,
-  "type": "module",
-  "exports": {
-    ".": "./src/index.ts"
-  },
-  "scripts": {
-    "build": "tsc --noEmit",
-    "lint": "tsc --noEmit",
-    "typecheck": "tsc --noEmit",
-    "test": "node --test",
-    "prisma": "prisma",
-    "db:studio": "prisma studio"
-  },
-  "devDependencies": {
-    "prisma": "^7.7.0",
-    "typescript": "^5.9.2"
-  },
-  "dependencies": {
-    "@prisma/client": "^7.7.0"
-  }
+    "name": "@safevoices/prisma",
+    "version": "0.0.0",
+    "private": true,
+    "type": "module",
+    "exports": {
+        ".": "./src/index.ts",
+        "./case-lifecycle": "./src/case-lifecycle.ts",
+        "./case-store-types": "./src/case-store-types.ts",
+        "./client": "./src/client.ts"
+    },
+    "scripts": {
+        "build": "prisma generate && tsc --noEmit",
+        "lint": "tsc --noEmit",
+        "typecheck": "tsc --noEmit",
+        "test": "node --import tsx --test src/case-lifecycle.test.ts src/memory-partner-store.test.ts src/jobs/purge.test.ts",
+        "prisma": "prisma",
+        "db:generate": "prisma generate",
+        "db:migrate": "prisma migrate dev",
+        "db:migrate:deploy": "prisma migrate deploy",
+        "db:migrate:status": "prisma migrate status",
+        "db:push": "prisma db push",
+        "db:seed": "node --import tsx src/seed.ts",
+        "db:studio": "prisma studio"
+    },
+    "dependencies": {
+        "@node-rs/argon2": "^2.0.2",
+        "@prisma/client": "^7.7.0"
+    },
+    "devDependencies": {
+        "@types/node": "^22.15.21",
+        "prisma": "^7.7.0",
+        "tsx": "^4.20.3",
+        "typescript": "^5.9.2"
+    }
 }
