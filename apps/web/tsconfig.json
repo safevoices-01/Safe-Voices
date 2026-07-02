@@ -1,7 +1,19 @@
 {
-  "extends": "../../tsconfig.base.json",
-  "compilerOptions": {
-    "jsx": "react-jsx"
-  },
-  "include": ["src"]
+    "extends": "./tsconfig.next.json",
+    "compilerOptions": {
+        "jsx": "react-jsx"
+    },
+    "include": [
+        "next-env.d.ts",
+        "app/**/*.ts",
+        "app/**/*.tsx",
+        "components/**/*.ts",
+        "components/**/*.tsx",
+        "lib/**/*.ts",
+        "hooks/**/*.ts",
+        "vitest.config.ts",
+        "vitest.setup.ts",
+        ".next/types/**/*.ts"
+    ],
+    "exclude": ["node_modules"]
 }

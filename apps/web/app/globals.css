@@ -1,0 +1,18 @@
+@import '@safevoices/ui/styles.css';
+
+@source "./**/*.{ts,tsx}";
+@source "../components/**/*.{ts,tsx}";
+@source "../../../packages/ui/src/**/*.{ts,tsx}";
+
+@theme {
+    --font-arabic: 'Noto Sans Arabic', 'Segoe UI', Tahoma, sans-serif;
+}
+
+html[lang='ar'] body.font-arabic {
+    font-family: var(--font-arabic), 'Segoe UI', Tahoma, sans-serif;
+}
+
+[dir='rtl'] .ltr-embed {
+    direction: ltr;
+    unicode-bidi: embed;
+}

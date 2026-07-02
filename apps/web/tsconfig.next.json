@@ -1,0 +1,36 @@
+{
+    "extends": "../../tsconfig.base.json",
+    "compilerOptions": {
+        "lib": ["dom", "dom.iterable", "ES2022"],
+        "allowJs": true,
+        "jsx": "preserve",
+        "plugins": [{ "name": "next" }],
+        "incremental": true,
+        "moduleResolution": "bundler",
+        "resolveJsonModule": true,
+        "strict": true,
+        "noEmit": true,
+        "baseUrl": ".",
+        "paths": {
+            "@/i18n/*": ["./i18n/*"],
+            "@/lib/utils": ["../../packages/ui/src/lib/utils"],
+            "@/lib/*": ["./lib/*"],
+            "@/components/ui/*": ["../../packages/ui/src/components/ui/*"],
+            "@/components/*": ["./components/*"],
+            "@safevoices/ui/*": ["../../packages/ui/src/*"]
+        }
+    },
+    "include": [
+        "next-env.d.ts",
+        "app/**/*.ts",
+        "app/**/*.tsx",
+        "components/**/*.ts",
+        "components/**/*.tsx",
+        "lib/**/*.ts",
+        "hooks/**/*.ts",
+        "i18n/**/*.ts",
+        "messages/**/*.json",
+        ".next/types/**/*.ts"
+    ],
+    "exclude": ["node_modules"]
+}
