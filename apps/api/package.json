@@ -1,19 +1,26 @@
 {
-  "name": "@safevoices/api",
-  "version": "0.0.0",
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "build": "tsc --noEmit",
-    "dev": "tsc --noEmit --watch",
-    "lint": "tsc --noEmit",
-    "typecheck": "tsc --noEmit",
-    "test": "node --test"
-  },
-  "dependencies": {
-    "@safevoices/trpc": "workspace:*"
-  },
-  "devDependencies": {
-    "typescript": "^5.9.2"
-  }
+    "name": "@safevoices/api",
+    "version": "0.0.0",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "build": "tsc --noEmit",
+        "dev": "tsx watch src/server.ts",
+        "lint": "tsc --noEmit",
+        "typecheck": "tsc --noEmit",
+        "test": "node --test"
+    },
+    "dependencies": {
+        "@hono/node-server": "^1.19.14",
+        "@safevoices/ai": "workspace:*",
+        "@safevoices/prisma": "workspace:*",
+        "@safevoices/trpc": "workspace:*",
+        "dotenv": "^17.4.2",
+        "hono": "^4.12.12"
+    },
+    "devDependencies": {
+        "@types/node": "^22.19.17",
+        "tsx": "^4.21.0",
+        "typescript": "^5.9.2"
+    }
 }

@@ -1,3 +1,3 @@
 export function initApiApp() {
-  return { status: "ok" }
+    return { status: 'ok' };
 }
