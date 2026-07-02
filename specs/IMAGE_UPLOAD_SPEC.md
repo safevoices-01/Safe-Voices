@@ -7,4 +7,4 @@
 | [PRODUCT.md](./feat-0026-image-upload/PRODUCT.md) | PM, design, QA | Problem, use cases, journeys, ship checklist, acceptance |
 | [TECH.md](./feat-0026-image-upload/TECH.md) | Engineers | Routes, modules, API, env, testing matrix, gaps |
 
-Legacy references: [feat-0010](./feat-0010-evidence-upload-storage/PRODUCT.md), [feat-0023](./feat-0023-evidence-pipeline/PRODUCT.md), [AI_CHAT_IMAGE_CONTEXT.md](./AI_CHAT_IMAGE_CONTEXT.md).
+Legacy references: [feat-0010](./feat-0010-evidence-upload-storage/PRODUCT.md), [feat-0023](./feat-0023-evidence-pipeline/PRODUCT.md), [feat-0028](./feat-0028-message-attachment-linkage/PRODUCT.md), [AI_CHAT_IMAGE_CONTEXT.md](./AI_CHAT_IMAGE_CONTEXT.md).

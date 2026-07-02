@@ -4,7 +4,7 @@
 
 **Image upload** lets reporters attach **PNG, JPEG, or WebP** evidence during anonymous reporting chat. Files are stored in **Supabase Storage** via a **presigned two-step upload** (server sign → browser PUT). When storage is unset, chat **falls back** to inline file parts so dev and demo still work.
 
-**Status:** Presign API, chat picker, and orphan cleanup job are implemented. Message↔attachment linkage, investigator signed download, server submit guard, and automated upload tests remain open.
+**Status:** Presign API, chat picker, orphan cleanup, message linkage, storage URL bubbles, and submit guard are implemented. Investigator signed download and storage purge on retention remain open.
 
 Complements [feat-0008](../feat-0008-reporting-chat-ai/PRODUCT.md) (chat UI), [feat-0009](../feat-0009-case-submit-lifecycle/PRODUCT.md) (read-only after submit), [feat-0010](../feat-0010-evidence-upload-storage/PRODUCT.md) (storage API), [feat-0023](../feat-0023-evidence-pipeline/PRODUCT.md) (end-to-end pipeline), and [feat-0021](../feat-0021-investigator-workflow/PRODUCT.md) (case detail).
 
@@ -26,7 +26,7 @@ Evidence images cannot live only in chat payloads: message size limits, no durab
 
 | Path | When | Storage | DB row | Chat bubble |
 |------|------|---------|--------|-------------|
-| **A. Presigned** | Supabase env set; presign succeeds | Bucket `cases/{caseId}/…` | `CaseAttachment` on presign | Data URL via SDK + filename in progress |
+| **A. Presigned** | Supabase env set; presign succeeds | Bucket `cases/{caseId}/…` | `CaseAttachment` on confirm | Storage `publicUrl` in bubble ([feat-0028](../feat-0028-message-attachment-linkage/PRODUCT.md)) |
 | **B. Inline fallback** | `UPLOAD_NOT_CONFIGURED` (503) | None | None | Data URL only |
 
 Target: Path A is primary in reporting mode; Path B is acceptable for dev/demo only.

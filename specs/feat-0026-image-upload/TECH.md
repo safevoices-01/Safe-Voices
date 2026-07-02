@@ -253,17 +253,11 @@ if (await getCaseStore().isCaseSubmitted(caseId)) {
 
 | Gap | Severity | Owner |
 |-----|----------|-------|
-| No server submit guard on upload | Medium | feat-0026 |
-| `CaseAttachment` before PUT completes | Medium | feat-0026 |
-| No `attachmentId` in API response | Low | feat-0026 |
-| Message ↔ attachment not linked | Medium | feat-0026 |
-| Chat uses data URLs not storage URLs | Medium | feat-0026 |
-| No server size validation | Medium | feat-0026 |
+| Chat uses data URLs when storage unset | Low | feat-0026 (fallback) |
 | Investigator signed download | Medium | feat-0021, 0026 |
 | Upload E2E not in CI | Medium | feat-0025 |
 | Case purge does not delete storage objects | Medium | feat-0017 |
 | Private bucket + signed read undocumented in ops | High | feat-0024 |
-| feat-0010 / feat-0023 TECH partially stale | Low | docs |
 
 Maintain [`../SPEC_GAPS.md`](../SPEC_GAPS.md) when closing items.
 
@@ -275,9 +269,9 @@ Maintain [`../SPEC_GAPS.md`](../SPEC_GAPS.md) when closing items.
 | Client `uploadEvidence` | Complete |
 | Chat picker + fallback | Complete |
 | Orphan cleanup job | Complete |
-| Submit guard (API) | Open |
-| Post-PUT attachment confirm | Open |
-| Message attachment refs | Open |
+| Submit guard (API) | Complete ([feat-0028](../feat-0028-message-attachment-linkage/PRODUCT.md)) |
+| Post-PUT attachment confirm | Complete |
+| Message attachment refs | Complete ([feat-0028](../feat-0028-message-attachment-linkage/PRODUCT.md)) |
 | Investigator signed URL | Open |
 | Upload tests | Open |
 

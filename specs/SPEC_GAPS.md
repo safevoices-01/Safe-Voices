@@ -39,6 +39,14 @@ Living index of known gaps between specs and implementation. Update this file wh
 | Submit email not wired | [0009](./feat-0009-case-submit-lifecycle/PRODUCT.md), [0013](./feat-0013-transactional-email/PRODUCT.md) | `sendCaseReceivedEmail` exists; anonymous MVP has no email |
 | Resend in production | [0013](./feat-0013-transactional-email/PRODUCT.md) | Partner OTP logs code in dev when Resend unset |
 
+## Recently closed (feat-0028)
+
+| Item | Feat | Notes |
+|------|------|-------|
+| Message ↔ attachment linkage | 0028 | `messageAttachments` on chat POST; `CaseMessage.attachments` JSON |
+| Storage URLs in chat bubbles | 0028 | Reporting chat sends `publicUrl` file parts after presign upload |
+| Upload submit guard | 0026, 0028 | Presign + confirm return 409 when case submitted |
+
 ## Cross-cutting gaps (no dedicated feat yet)
 
 | Gap | Suggested owner | Priority |
