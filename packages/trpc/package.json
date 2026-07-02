@@ -1,18 +1,31 @@
 {
-  "name": "@safevoices/trpc",
-  "version": "0.0.0",
-  "private": true,
-  "type": "module",
-  "exports": {
-    ".": "./src/index.ts"
-  },
-  "scripts": {
-    "build": "tsc --noEmit",
-    "lint": "tsc --noEmit",
-    "typecheck": "tsc --noEmit",
-    "test": "node --test"
-  },
-  "devDependencies": {
-    "typescript": "^5.9.2"
-  }
+    "name": "@safevoices/trpc",
+    "version": "0.0.0",
+    "private": true,
+    "type": "module",
+    "exports": {
+        ".": "./src/index.ts",
+        "./case-handlers": "./src/case-handlers.ts",
+        "./partner-handlers": "./src/partner-handlers.ts",
+        "./upload-handlers": "./src/upload-handlers.ts",
+        "./upload-limits": "./src/upload-limits.ts",
+        "./schemas": "./src/schemas.ts"
+    },
+    "scripts": {
+        "build": "tsc --noEmit",
+        "lint": "tsc --noEmit",
+        "typecheck": "tsc --noEmit",
+        "test": "node --import tsx --test src/case-handlers.test.ts src/upload-handlers.test.ts"
+    },
+    "dependencies": {
+        "@safevoices/ai": "workspace:*",
+        "@safevoices/emails": "workspace:*",
+        "@safevoices/prisma": "workspace:*",
+        "zod": "^3.25.76"
+    },
+    "devDependencies": {
+        "@types/node": "^22.15.21",
+        "tsx": "^4.20.3",
+        "typescript": "^5.9.2"
+    }
 }
