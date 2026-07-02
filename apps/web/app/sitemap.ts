@@ -3,7 +3,7 @@ import { getSiteUrl } from '../lib/site';
 
 const LOCALES = ['en', 'ar'] as const;
 
-const PATHS = ['', '/access', '/chat', '/documentation'] as const;
+const PATHS = ['', '/access', '/demo', '/documentation'] as const;
 
 export default function sitemap(): MetadataRoute.Sitemap {
     const base = getSiteUrl();

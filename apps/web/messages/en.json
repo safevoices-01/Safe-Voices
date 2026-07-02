@@ -126,6 +126,18 @@
     "conversation": "Conversation",
     "suggestedQuestions": "Suggested questions"
   },
+  "demo": {
+    "assistantSubtitle": "Demo — general reporting guidance",
+    "navLabel": "Demo chat",
+    "sessionLabel": "Demo session (not saved)",
+    "demoBanner": "Demo chat only. For anonymous reporting, <link>start a secure conversation</link>.",
+    "welcome": "Welcome to the Safe Voices demo assistant.\n\nAsk how anonymous reporting usually works, what to include in a report, or how tracking codes are used. This is general guidance only—not legal advice and not a secure intake session.\n\nWhat would you like to know?",
+    "suggestion1": "How does anonymous reporting work?",
+    "suggestion2": "What should I include in a report?",
+    "suggestion3": "How do tracking codes work?",
+    "suggestion4": "How do I start a secure report?",
+    "messagePlaceholder": "Ask a question about reporting..."
+  },
   "crisis": {
     "title": "Your safety matters",
     "intro": "If you or someone else may be in immediate danger, consider these resources. You can pause this conversation at any time.",

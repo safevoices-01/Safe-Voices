@@ -58,7 +58,7 @@ export function ErrorSection(): ReactElement {
                         <Button
                             variant="outline"
                             size="lg"
-                            render={<Link href="/chat" />}
+                            render={<Link href="/demo" />}
                         >
                             Ask the assistant
                         </Button>

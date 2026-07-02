@@ -69,7 +69,7 @@ export default async function DocumentationPage(): Promise<ReactElement> {
                         <Button variant="outline" render={<Link href="/" />}>
                             {t('backHome')}
                         </Button>
-                        <Button render={<Link href="/chat" />}>
+                        <Button render={<Link href="/demo" />}>
                             {t('openChat')}
                         </Button>
                     </div>
@@ -109,7 +109,7 @@ export default async function DocumentationPage(): Promise<ReactElement> {
                             <li>
                                 Prefer a guided conversation first? Open the{' '}
                                 <Link
-                                    href="/chat"
+                                    href="/demo"
                                     className="font-medium text-foreground underline-offset-4 hover:underline"
                                 >
                                     AI assistant

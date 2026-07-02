@@ -3,27 +3,23 @@ import type { ReactNode } from 'react';
 import { Suspense } from 'react';
 
 const description =
-    'Describe a workplace concern at your own pace. Secure anonymous reporting chat tied to your case tracking code.';
+    'Try the Safe Voices AI assistant: learn how anonymous reporting works, what to include in a report, and how tracking codes are used. Demo only — not a secure intake session.';
 
 export const metadata: Metadata = {
-    title: 'Reporting chat',
+    title: 'Demo AI assistant',
     description,
     openGraph: {
-        title: 'Reporting chat | Safe Voices',
+        title: 'Demo AI assistant | Safe Voices',
         description,
-        url: '/chat',
+        url: '/demo',
     },
     twitter: {
-        title: 'Reporting chat | Safe Voices',
+        title: 'Demo AI assistant | Safe Voices',
         description,
     },
 };
 
-/**
- * Chat uses its own shell (no marketing header/footer). Root layout only
- * wraps the document.
- */
-export default function ChatLayout({ children }: { children: ReactNode }) {
+export default function DemoLayout({ children }: { children: ReactNode }) {
     return (
         <div className="flex h-dvh max-h-dvh flex-col overflow-hidden bg-background">
             <Suspense fallback={null}>{children}</Suspense>

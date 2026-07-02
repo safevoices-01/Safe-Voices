@@ -11,6 +11,7 @@ const LOCALELESS_PATHS = new Set([
     '/access',
     '/auth',
     '/chat',
+    '/demo',
     '/dashboard',
     '/documentation',
 ]);
@@ -51,10 +52,15 @@ export default function middleware(request: NextRequest) {
     }
 
     if (pathWithoutLocale === '/chat') {
-        const caseId = searchParams.get('caseId');
+        const caseId = searchParams.get('caseId')?.trim();
+        if (!caseId) {
+            const url = request.nextUrl.clone();
+            url.pathname = `/${locale}/access`;
+            url.search = '';
+            return NextResponse.redirect(url);
+        }
         const hasSession = Boolean(request.cookies.get(SESSION_COOKIE)?.value);
         if (
-            caseId &&
             !hasSession &&
             process.env.SAFEVOICES_ENFORCE_CHAT_SESSION === 'true'
         ) {
@@ -84,5 +90,5 @@ export default function middleware(request: NextRequest) {
 }
 
 export const config = {
-    matcher: ['/', '/(en|ar)/:path*', '/access', '/auth', '/chat', '/dashboard', '/documentation'],
+    matcher: ['/', '/(en|ar)/:path*', '/access', '/auth', '/chat', '/demo', '/dashboard', '/documentation'],
 };

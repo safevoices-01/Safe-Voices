@@ -39,7 +39,7 @@ export async function SiteHeader(): Promise<ReactElement> {
                     >
                         {t('documentation')}
                     </Button>
-                    <Button size="sm" render={<Link href="/chat" />}>
+                    <Button size="sm" render={<Link href="/demo" />}>
                         {t('openChat')}
                     </Button>
                 </nav>

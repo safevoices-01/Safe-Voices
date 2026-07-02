@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { brandLogoSrc } from '../lib/branding';
 
 const productLinks = [
-    { href: '/chat', label: 'AI chat' },
+    { href: '/demo', label: 'AI chat' },
     { href: '/documentation', label: 'Documentation' },
 ] as const;
 

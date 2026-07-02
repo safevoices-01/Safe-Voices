@@ -143,7 +143,7 @@ export default async function HomePage(): Promise<ReactElement> {
                                 size="lg"
                                 variant="outline"
                                 className="h-10.5 rounded-xl px-5"
-                                render={<Link href="/documentation" />}
+                                render={<Link href="/demo" />}
                             >
                                 {t('heroSecondary')}
                             </Button>
