@@ -1,15 +1,26 @@
 {
-  "name": "@safevoices/ai",
-  "version": "0.0.0",
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "build": "tsc --noEmit",
-    "lint": "tsc --noEmit",
-    "typecheck": "tsc --noEmit",
-    "test": "node --test"
-  },
-  "devDependencies": {
-    "typescript": "^5.9.2"
-  }
+    "name": "@safevoices/ai",
+    "version": "0.0.0",
+    "private": true,
+    "type": "module",
+    "exports": {
+        ".": "./src/index.ts",
+        "./chat": "./src/chat.ts",
+        "./chat-post": "./src/chat-post.ts",
+        "./reporting": "./src/reporting.ts"
+    },
+    "scripts": {
+        "build": "tsc --noEmit",
+        "lint": "tsc --noEmit",
+        "typecheck": "tsc --noEmit",
+        "test": "node --import tsx --test src/reporting.test.ts"
+    },
+    "dependencies": {
+        "ai": "^6.0.158"
+    },
+    "devDependencies": {
+        "@types/node": "^25.6.0",
+        "tsx": "^4.20.3",
+        "typescript": "^5.9.2"
+    }
 }
