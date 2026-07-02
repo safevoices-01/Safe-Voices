@@ -1,18 +1,18 @@
 {
-  "name": "@safevoices/configs-typescript",
-  "version": "0.0.0",
-  "private": true,
-  "license": "PROPRIETARY",
-  "exports": {
-    "./base": "./base.json",
-    "./base.json": "./base.json",
-    "./base.app": "./base.app.json",
-    "./base.app.json": "./base.app.json",
-    "./base.node": "./base.node.json",
-    "./base.node.json": "./base.node.json",
-    "./nextjs": "./nextjs.json",
-    "./nextjs.json": "./nextjs.json",
-    "./react-library": "./react-library.json",
-    "./react-library.json": "./react-library.json"
-  }
+    "name": "@safevoices/configs-typescript",
+    "version": "0.0.0",
+    "private": true,
+    "license": "PROPRIETARY",
+    "exports": {
+        "./base": "./base.json",
+        "./base.json": "./base.json",
+        "./base.app": "./base.app.json",
+        "./base.app.json": "./base.app.json",
+        "./base.node": "./base.node.json",
+        "./base.node.json": "./base.node.json",
+        "./nextjs": "./nextjs.json",
+        "./nextjs.json": "./nextjs.json",
+        "./react-library": "./react-library.json",
+        "./react-library.json": "./react-library.json"
+    }
 }

@@ -73,6 +73,8 @@ next-env.d.ts
 
 # Testing
 coverage
+test-results/
+playwright-report/
 
 # Turbo
 .turbo
@@ -80,6 +82,10 @@ coverage
 
 # Local scratch / personal (editor, agents)
 .me/
+
+# Prisma local SQLite
+packages/prisma/dev.db
+packages/prisma/dev.db-journal
 
 # Accidental duplicate manifest (keep root package.json as source of truth)
 package copy.json

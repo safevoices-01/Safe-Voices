@@ -13,18 +13,21 @@ This package contains ESLint configurations tailored for different environments 
 ## 🛠️ Available Configurations
 
 ### Base Configuration (`base.js`)
+
 - Core ESLint rules for JavaScript and TypeScript
 - Import/export rules and best practices
 - Code style and formatting rules
 - Performance and security recommendations
 
 ### Next.js Configuration (`next.js`)
+
 - Extends base configuration
 - Next.js specific rules and optimizations
 - React hooks and JSX rules
 - Next.js best practices
 
 ### React Internal Configuration (`react-internal.js`)
+
 - Optimized for React component libraries
 - Internal package development rules
 - Component and hook best practices
@@ -37,14 +40,14 @@ This package contains ESLint configurations tailored for different environments 
 Add to your `eslint.config.js`:
 
 ```js
-import { baseConfig } from '@safevoices/configs-eslint/base'
-import { nextConfig } from '@safevoices/configs-eslint/next'
+import { baseConfig } from '@safevoices/configs-eslint/base';
+import { nextConfig } from '@safevoices/configs-eslint/next';
 
 export default [
-  ...baseConfig,
-  ...nextConfig,
-  // Your custom rules
-]
+    ...baseConfig,
+    ...nextConfig,
+    // Your custom rules
+];
 ```
 
 ### In Packages
@@ -52,13 +55,10 @@ export default [
 For React libraries:
 
 ```js
-import { baseConfig } from '@safevoices/configs-eslint/base'
-import { reactInternalConfig } from '@safevoices/configs-eslint/react-internal'
+import { baseConfig } from '@safevoices/configs-eslint/base';
+import { reactInternalConfig } from '@safevoices/configs-eslint/react-internal';
 
-export default [
-  ...baseConfig,
-  ...reactInternalConfig,
-]
+export default [...baseConfig, ...reactInternalConfig];
 ```
 
 ## 🔧 Rules Overview

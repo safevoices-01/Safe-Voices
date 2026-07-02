@@ -13,11 +13,13 @@ This package contains TypeScript configurations tailored for different environme
 ## 🛠️ Available Configurations
 
 ### Base Configuration (`base.json`)
+
 ```json
 {
-  "extends": "@safevoices/configs-typescript/base"
+    "extends": "@safevoices/configs-typescript/base"
 }
 ```
+
 - Strict type checking enabled
 - Modern ECMAScript target (ES2022)
 - Path mapping support
@@ -25,11 +27,13 @@ This package contains TypeScript configurations tailored for different environme
 - Source maps for debugging
 
 ### Next.js Configuration (`nextjs.json`)
+
 ```json
 {
-  "extends": "@safevoices/configs-typescript/nextjs"
+    "extends": "@safevoices/configs-typescript/nextjs"
 }
 ```
+
 - Extends base configuration
 - Next.js specific compiler options
 - JSX preservation for Next.js handling
@@ -37,11 +41,13 @@ This package contains TypeScript configurations tailored for different environme
 - Optimized for Next.js build system
 
 ### React Library Configuration (`react-library.json`)
+
 ```json
 {
-  "extends": "@safevoices/configs-typescript/react-library"
+    "extends": "@safevoices/configs-typescript/react-library"
 }
 ```
+
 - Optimized for component library development
 - Declaration file generation
 - Stricter type checking for public APIs
@@ -52,50 +58,53 @@ This package contains TypeScript configurations tailored for different environme
 ### In Applications
 
 #### Next.js Application
+
 ```json
 // tsconfig.json
 {
-  "extends": "@safevoices/configs-typescript/nextjs",
-  "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./*"]
-    }
-  },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
-  "exclude": ["node_modules"]
+    "extends": "@safevoices/configs-typescript/nextjs",
+    "compilerOptions": {
+        "baseUrl": ".",
+        "paths": {
+            "@/*": ["./*"]
+        }
+    },
+    "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
+    "exclude": ["node_modules"]
 }
 ```
 
 #### Vite Application
+
 ```json
 // tsconfig.json
 {
-  "extends": "@safevoices/configs-typescript/base",
-  "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./src/*"]
-    }
-  },
-  "include": ["src/**/*", "vite.config.ts"],
-  "exclude": ["node_modules", "dist"]
+    "extends": "@safevoices/configs-typescript/base",
+    "compilerOptions": {
+        "baseUrl": ".",
+        "paths": {
+            "@/*": ["./src/*"]
+        }
+    },
+    "include": ["src/**/*", "vite.config.ts"],
+    "exclude": ["node_modules", "dist"]
 }
 ```
 
 ### In Packages
 
 #### UI Component Library
+
 ```json
 // tsconfig.json
 {
-  "extends": "@safevoices/configs-typescript/react-library",
-  "compilerOptions": {
-    "outDir": "dist",
-    "declarationDir": "dist/types"
-  },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist", "**/*.test.*"]
+    "extends": "@safevoices/configs-typescript/react-library",
+    "compilerOptions": {
+        "outDir": "dist",
+        "declarationDir": "dist/types"
+    },
+    "include": ["src/**/*"],
+    "exclude": ["node_modules", "dist", "**/*.test.*"]
 }
 ```
 
@@ -104,21 +113,25 @@ This package contains TypeScript configurations tailored for different environme
 ### Compiler Options
 
 #### Type Checking
+
 - `strict: true` - Enable all strict type checking options
 - `noUncheckedIndexedAccess: true` - Stricter array/object access
 - `exactOptionalPropertyTypes: true` - Exact optional property handling
 
 #### Module Resolution
+
 - `moduleResolution: "bundler"` - Modern module resolution
 - `allowImportingTsExtensions: true` - Import .ts files directly
 - `resolveJsonModule: true` - Import JSON files as modules
 
 #### Emit Options
+
 - `declaration: true` - Generate .d.ts files
 - `declarationMap: true` - Source maps for declarations
 - `sourceMap: true` - Generate source maps for debugging
 
 #### JSX Support
+
 - `jsx: "react-jsx"` - Modern JSX transform
 - `jsxImportSource: "react"` - React JSX runtime
 
@@ -128,10 +141,10 @@ All configurations support path mapping for cleaner imports:
 
 ```typescript
 // Instead of
-import { Button } from '../../../components/ui/button'
+import { Button } from '../../../components/ui/button';
 
 // You can use
-import { Button } from '@/components/ui/button'
+import { Button } from '@/components/ui/button';
 ```
 
 ## 🚀 Development
@@ -149,33 +162,36 @@ You can extend these configurations in your project:
 
 ```json
 {
-  "extends": "@safevoices/configs-typescript/base",
-  "compilerOptions": {
-    "baseUrl": ".",
-    "paths": {
-      "@/*": ["./src/*"],
-      "@ui/*": ["./src/components/ui/*"]
-    },
-    // Additional custom options
-  }
+    "extends": "@safevoices/configs-typescript/base",
+    "compilerOptions": {
+        "baseUrl": ".",
+        "paths": {
+            "@/*": ["./src/*"],
+            "@ui/*": ["./src/components/ui/*"]
+        }
+        // Additional custom options
+    }
 }
 ```
 
 ## 🎯 Features
 
 ### Modern TypeScript Features
+
 - **Template Literal Types** - Advanced string manipulation
 - **Conditional Types** - Type-level logic
 - **Mapped Types** - Transform existing types
 - **Utility Types** - Built-in type helpers
 
 ### Development Experience
+
 - **Incremental Compilation** - Faster rebuilds
 - **Composite Projects** - Multi-project builds
 - **Project References** - Inter-project dependencies
 - **Watch Mode** - File system monitoring
 
 ### Build Optimization
+
 - **Tree Shaking** - Dead code elimination
 - **Code Splitting** - Bundle optimization
 - **Source Maps** - Debug support in production
