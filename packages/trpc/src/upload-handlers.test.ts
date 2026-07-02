@@ -178,4 +178,33 @@ describe('handleCaseUploadConfirmPost', () => {
         assert.equal(json.publicUrl, publicUrl);
         assert.equal(await store.countAttachments(created.caseId), 1);
     });
+
+    it('rejects confirm after case submit', async () => {
+        const store = getCaseStore();
+        const created = await store.createCase();
+        const verified = await store.verifyCase({
+            caseId: created.caseId,
+            secret: created.secret,
+        });
+        assert.equal(verified.ok, true);
+        if (!verified.ok) throw new Error('verify failed');
+        await store.markCaseSubmitted(created.caseId);
+
+        const publicUrl = `https://example.test/storage/v1/object/public/case-uploads/cases/${created.caseId}/evidence.png`;
+        const res = await handleCaseUploadConfirmPost(
+            created.caseId,
+            verified.token,
+            new Request('http://localhost/upload/confirm', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    publicUrl,
+                    filename: 'evidence.png',
+                    mimeType: 'image/png',
+                    sizeBytes: 2048,
+                }),
+            }),
+        );
+        assert.equal(res.status, 409);
+    });
 });

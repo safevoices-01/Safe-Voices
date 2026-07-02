@@ -5,6 +5,11 @@ import {
 import { getCaseStore } from '@safevoices/prisma';
 import { API_ERROR_CODES, apiErrorResponse } from './api-errors';
 import {
+    invalidMessageAttachmentsResponse,
+    parseMessageAttachmentsFromBody,
+    validateMessageAttachments,
+} from './message-attachments';
+import {
     CASE_ID_REGEX,
     hashClientKeyFromRequest,
     SECRET_MIN_LENGTH,
@@ -190,6 +195,19 @@ export async function handleCaseChatPost(
         return parseChatBodyError(parsed);
     }
 
+    let messageAttachments;
+    try {
+        messageAttachments = parseMessageAttachmentsFromBody(body);
+    } catch {
+        return invalidMessageAttachmentsResponse();
+    }
+
+    const attachmentGate = await validateMessageAttachments(
+        caseId,
+        messageAttachments,
+    );
+    if (!attachmentGate.ok) return attachmentGate.response;
+
     const existingExtraction = (await store.getExtraction(caseId))?.fields ?? {};
     const caseStatus = (await store.getCaseStatus(caseId)) ?? 'OPEN';
 
@@ -207,6 +225,7 @@ export async function handleCaseChatPost(
                 userContent: userText || lastUserText(parsed.messages as never[]),
                 assistantContent: assistantText,
                 clientReqId: parsed.clientRequestId,
+                userAttachments: attachmentGate.attachments,
                 extraction: extractionPatch,
                 crisisTriggered: crisis.triggered,
                 crisisTriggerType: crisis.triggerType ?? undefined,

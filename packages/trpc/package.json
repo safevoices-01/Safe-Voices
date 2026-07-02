@@ -15,7 +15,7 @@
         "build": "tsc --noEmit",
         "lint": "tsc --noEmit",
         "typecheck": "tsc --noEmit",
-        "test": "node --import tsx --test src/case-handlers.test.ts src/upload-handlers.test.ts"
+        "test": "node --import tsx --test src/case-handlers.test.ts src/upload-handlers.test.ts src/message-attachments.test.ts"
     },
     "dependencies": {
         "@safevoices/ai": "workspace:*",

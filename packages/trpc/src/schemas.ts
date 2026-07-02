@@ -67,6 +67,15 @@ export const uploadConfirmResponseSchema = z.object({
     publicUrl: z.string(),
 });
 
+export const messageAttachmentRefSchema = z.object({
+    id: z.string().min(1),
+    url: z.string().url(),
+    mimeType: z.string().min(1),
+    name: z.string().min(1),
+});
+
+export const messageAttachmentsRequestSchema = z.array(messageAttachmentRefSchema);
+
 export const partnerOtpRequestSchema = z.object({
     email: z.string().email(),
 });
