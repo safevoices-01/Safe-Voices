@@ -1,18 +1,19 @@
 {
-  "name": "@safevoices/emails",
-  "version": "0.0.0",
-  "private": true,
-  "type": "module",
-  "exports": {
-    ".": "./src/index.ts"
-  },
-  "scripts": {
-    "build": "tsc --noEmit",
-    "lint": "tsc --noEmit",
-    "typecheck": "tsc --noEmit",
-    "test": "node --test"
-  },
-  "devDependencies": {
-    "typescript": "^5.9.2"
-  }
+    "name": "@safevoices/emails",
+    "version": "0.0.0",
+    "private": true,
+    "type": "module",
+    "exports": {
+        ".": "./src/index.ts"
+    },
+    "scripts": {
+        "build": "tsc --noEmit",
+        "lint": "tsc --noEmit",
+        "typecheck": "tsc --noEmit",
+        "test": "node --test"
+    },
+    "devDependencies": {
+        "@types/node": "^22.15.21",
+        "typescript": "^5.9.2"
+    }
 }
