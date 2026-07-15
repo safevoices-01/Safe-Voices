@@ -9,40 +9,54 @@ pnpm install
 pnpm --filter @safevoices/prisma run db:generate
 ```
 
-Set `SAFEVOICES_SECRET_PEPPER` in every non-ephemeral environment (never use the dev default in production).
+Set `SAFEVOICES_SECRET_PEPPER` in every non-ephemeral environment (never use the
+dev default in production).
 
-## Local development (SQLite)
+## Local development
+
+### Option A — in-memory (fastest)
 
 ```bash
-export DATABASE_URL="file:./packages/prisma/dev.db"
-pnpm --filter @safevoices/prisma exec prisma migrate dev
+unset DATABASE_URL
+# or: export CASE_STORE=memory
+pnpm dev:web
+```
+
+No migrations needed. Data is lost on process restart.
+
+### Option B — PostgreSQL (matches production)
+
+```bash
+export DATABASE_URL="postgresql://postgres:postgres@127.0.0.1:5432/safevoices"
+pnpm --filter @safevoices/prisma exec prisma migrate deploy
+pnpm --filter @safevoices/prisma run db:generate
 ```
 
 | Variable | Value |
 |----------|-------|
-| `DATABASE_URL` | `file:./packages/prisma/dev.db` |
+| `DATABASE_URL` | `postgresql://…` (required for Prisma store) |
 | `CASE_STORE` | Unset (auto-selects Prisma when `DATABASE_URL` is set) |
 
-To force in-memory stores (no DB file):
-
-```bash
-unset DATABASE_URL
-export CASE_STORE=memory
-```
+Prisma 7 uses `@prisma/adapter-pg`. SQLite `file:` URLs are **not** supported at
+runtime.
 
 ## Production (Supabase PostgreSQL)
 
-1. Create a Supabase project and copy the **connection pooling** URI (`postgresql://…`).
-2. Set secrets on the hosting platform (`apps/web` and `apps/api` if both run):
+1. Create a Supabase project and copy the **transaction pooler** URI
+   (`postgresql://…@…pooler.supabase.com:6543/postgres?pgbouncer=true`).
+2. Set secrets on the hosting platform (`apps/web`):
 
 ```bash
 DATABASE_URL=postgresql://...
 SAFEVOICES_SECRET_PEPPER=<rotated-secret>
 ```
 
-3. Apply migrations:
+3. Apply migrations **before** or as part of first deploy (from a machine that
+   can reach Supabase — use session-mode port `5432` if migrate fails on
+   `pgbouncer=true`):
 
 ```bash
+export DATABASE_URL="postgresql://…@…pooler.supabase.com:5432/postgres"
 pnpm --filter @safevoices/prisma exec prisma migrate deploy
 ```
 
@@ -52,16 +66,29 @@ pnpm --filter @safevoices/prisma exec prisma migrate deploy
 pnpm --filter @safevoices/prisma exec prisma migrate status
 ```
 
-If the schema provider in `schema.prisma` is still `sqlite`, switch to `postgresql` before your first production migration, or bootstrap with `prisma db push` once and baseline migrations with `prisma migrate resolve`.
+5. Redeploy `apps/web` so the runtime uses the fixed Prisma client + adapter.
+
+### Vercel checklist
+
+| Env var | Required |
+|---------|----------|
+| `DATABASE_URL` | Yes (Postgres) |
+| `SAFEVOICES_SECRET_PEPPER` | Yes |
+| `AI_GATEWAY_API_KEY` | Yes (chat) |
+| `CASE_STORE` | Leave unset |
+
+If migrations are missing, `POST /api/cases` returns `500` /
+`CASE_CREATE_FAILED` (tables do not exist).
 
 ## Shared state across processes
 
-Next.js (`:3000`) and Hono (`:8787`) must use the **same** `DATABASE_URL`. Without it, each process uses an isolated in-memory store.
+Next.js (`:3000`) and Hono (`:8787`) must use the **same** `DATABASE_URL`.
+Without it, each process uses an isolated in-memory store.
 
 ## Seed (optional)
 
 ```bash
-DATABASE_URL="file:./packages/prisma/dev.db" pnpm --filter @safevoices/prisma run db:seed
+DATABASE_URL="postgresql://…" pnpm --filter @safevoices/prisma run db:seed
 ```
 
 ## Retention and storage jobs
@@ -85,16 +112,17 @@ Cases with `legalHold = true` are never purged.
 
 | Provider | Recommendation |
 |----------|----------------|
-| SQLite (dev) | Copy `dev.db`; not for production |
 | Postgres (Supabase) | Enable automated backups; test restore quarterly |
 
 ## Troubleshooting
 
 | Symptom | Check |
 |---------|-------|
+| `POST /api/cases` 500 | Logs: Prisma needs adapter + Postgres URL; run `migrate deploy` |
+| `client engine requires adapter` | Ensure deploy includes `@prisma/adapter-pg` and updated `client.ts` |
 | Cases missing between web and API | Same `DATABASE_URL` on both processes |
-| `PrismaClient` validation on build | Lazy client — ensure `DATABASE_URL` only required at runtime |
-| Migrate fails on CI | Run `db:generate` before typecheck |
+| Migrate fails on pooler `:6543` | Use session mode `:5432` for migrate |
+| `PrismaClient` validation on build | Lazy client — `DATABASE_URL` only required at runtime |
 | Upload orphans accumulate | Supabase env + `orphan-uploads` cron |
 
 ## Related specs
