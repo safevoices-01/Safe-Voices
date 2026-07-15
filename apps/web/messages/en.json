@@ -42,6 +42,7 @@
     "VERIFY_FAILED": "We could not verify those credentials.",
     "VERIFY_LOCKED": "Too many attempts. Please wait before trying again. If you saved your credentials, try again later.",
     "SESSION_EXPIRED": "Session expired. Please verify your case credentials again.",
+    "CASE_CREATE_FAILED": "Unable to create case right now. Please try again.",
     "CASE_SUBMITTED": "This report has already been submitted.",
     "CASE_SUBMITTED_READONLY": "This report has been submitted and is read-only.",
     "CASE_NOT_FOUND": "Case not found",

@@ -8,15 +8,16 @@ const nextConfig: NextConfig = {
     typescript: {
         tsconfigPath: 'tsconfig.next.json',
     },
-    transpilePackages: ['@safevoices/ui'],
+    transpilePackages: ['@safevoices/ui', '@safevoices/prisma'],
     eslint: {
         ignoreDuringBuilds: true,
     },
     serverExternalPackages: [
         '@node-rs/argon2',
         '@prisma/client',
+        '@prisma/adapter-pg',
+        'pg',
         'prisma',
-        '@safevoices/prisma',
     ],
     webpack: (config, { isServer }) => {
         if (isServer) {
