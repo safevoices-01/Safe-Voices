@@ -37,8 +37,8 @@ export {
     type SignedUploadResult,
 } from './storage';
 
-export function getDatabaseProvider(): 'sqlite' | 'postgresql' {
+export function getDatabaseProvider(): 'postgresql' | 'memory' {
     const url = process.env.DATABASE_URL ?? '';
     if (url.startsWith('postgres')) return 'postgresql';
-    return 'sqlite';
+    return 'memory';
 }

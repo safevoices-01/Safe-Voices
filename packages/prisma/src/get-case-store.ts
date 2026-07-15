@@ -1,14 +1,8 @@
 import type { CaseStore } from './case-store-types';
-import { createRequire } from 'node:module';
 import { MemoryCaseStore } from './memory-case-store';
-
-const require = createRequire(import.meta.url);
+import { PrismaCaseStore } from './prisma-case-store';
 
 const caseStoreKey = Symbol.for('safevoices.caseStore');
-
-function loadPrismaCaseStore(): new () => CaseStore {
-    return require('./prisma-case-store.ts').PrismaCaseStore as new () => CaseStore;
-}
 
 export function getCaseStore(): CaseStore {
     const globalStore = globalThis as typeof globalThis & {
@@ -22,7 +16,6 @@ export function getCaseStore(): CaseStore {
     if (explicit === 'memory' || (!explicit && !hasDatabase)) {
         globalStore[caseStoreKey] = new MemoryCaseStore();
     } else {
-        const PrismaCaseStore = loadPrismaCaseStore();
         globalStore[caseStoreKey] = new PrismaCaseStore();
     }
     return globalStore[caseStoreKey];

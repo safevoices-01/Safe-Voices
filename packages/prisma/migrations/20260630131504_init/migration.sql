@@ -1,75 +1,97 @@
+-- CreateSchema
+CREATE SCHEMA IF NOT EXISTS "public";
+
+-- CreateEnum
+CREATE TYPE "CaseStatus" AS ENUM ('OPEN', 'SUBMITTED', 'UNDER_REVIEW', 'RESOLVED', 'CLOSED');
+
+-- CreateEnum
+CREATE TYPE "IncidentCategory" AS ENUM ('harassment', 'discrimination', 'fraud', 'safety', 'retaliation', 'data_breach', 'misconduct', 'other');
+
+-- CreateEnum
+CREATE TYPE "RiskLevel" AS ENUM ('low', 'medium', 'high', 'critical');
+
+-- CreateEnum
+CREATE TYPE "MessageRole" AS ENUM ('user', 'assistant', 'system');
+
 -- CreateTable
 CREATE TABLE "Case" (
-    "id" TEXT NOT NULL PRIMARY KEY,
+    "id" TEXT NOT NULL,
     "trackingCode" TEXT NOT NULL,
     "secretHash" TEXT NOT NULL,
     "secretSalt" TEXT NOT NULL,
-    "caseStatus" TEXT NOT NULL DEFAULT 'OPEN',
-    "incidentCategory" TEXT,
+    "caseStatus" "CaseStatus" NOT NULL DEFAULT 'OPEN',
+    "incidentCategory" "IncidentCategory",
     "incidentDescription" TEXT,
     "location" TEXT,
-    "occurredAt" DATETIME,
-    "riskLevel" TEXT,
-    "submittedAt" DATETIME,
+    "occurredAt" TIMESTAMP(3),
+    "riskLevel" "RiskLevel",
+    "submittedAt" TIMESTAMP(3),
     "failedAttempts" INTEGER NOT NULL DEFAULT 0,
-    "lockedUntil" DATETIME,
+    "lockedUntil" TIMESTAMP(3),
     "legalHold" BOOLEAN NOT NULL DEFAULT false,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    "updatedAt" DATETIME NOT NULL
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Case_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "CaseSession" (
-    "id" TEXT NOT NULL PRIMARY KEY,
+    "id" TEXT NOT NULL,
     "caseId" TEXT NOT NULL,
     "tokenHash" TEXT NOT NULL,
-    "expiresAt" DATETIME NOT NULL,
-    "revokedAt" DATETIME,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT "CaseSession_caseId_fkey" FOREIGN KEY ("caseId") REFERENCES "Case" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+    "expiresAt" TIMESTAMP(3) NOT NULL,
+    "revokedAt" TIMESTAMP(3),
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "CaseSession_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "CaseMessage" (
-    "id" TEXT NOT NULL PRIMARY KEY,
+    "id" TEXT NOT NULL,
     "caseId" TEXT NOT NULL,
-    "role" TEXT NOT NULL,
+    "role" "MessageRole" NOT NULL,
     "content" TEXT NOT NULL,
     "attachments" JSONB,
     "clientReqId" TEXT,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT "CaseMessage_caseId_fkey" FOREIGN KEY ("caseId") REFERENCES "Case" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "CaseMessage_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "CaseExtraction" (
-    "id" TEXT NOT NULL PRIMARY KEY,
+    "id" TEXT NOT NULL,
     "caseId" TEXT NOT NULL,
     "schemaVersion" INTEGER NOT NULL,
     "payload" JSONB NOT NULL,
-    "updatedAt" DATETIME NOT NULL,
-    CONSTRAINT "CaseExtraction_caseId_fkey" FOREIGN KEY ("caseId") REFERENCES "Case" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "CaseExtraction_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "CaseAttachment" (
-    "id" TEXT NOT NULL PRIMARY KEY,
+    "id" TEXT NOT NULL,
     "caseId" TEXT NOT NULL,
     "url" TEXT NOT NULL,
     "mimeType" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "sizeBytes" INTEGER,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT "CaseAttachment_caseId_fkey" FOREIGN KEY ("caseId") REFERENCES "Case" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "CaseAttachment_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
 CREATE TABLE "CrisisEvent" (
-    "id" TEXT NOT NULL PRIMARY KEY,
+    "id" TEXT NOT NULL,
     "caseId" TEXT NOT NULL,
     "triggerType" TEXT NOT NULL,
-    "createdAt" DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    CONSTRAINT "CrisisEvent_caseId_fkey" FOREIGN KEY ("caseId") REFERENCES "Case" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "CrisisEvent_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateIndex
@@ -98,3 +120,18 @@ CREATE INDEX "CaseAttachment_caseId_createdAt_idx" ON "CaseAttachment"("caseId",
 
 -- CreateIndex
 CREATE INDEX "CrisisEvent_caseId_createdAt_idx" ON "CrisisEvent"("caseId", "createdAt");
+
+-- AddForeignKey
+ALTER TABLE "CaseSession" ADD CONSTRAINT "CaseSession_caseId_fkey" FOREIGN KEY ("caseId") REFERENCES "Case"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "CaseMessage" ADD CONSTRAINT "CaseMessage_caseId_fkey" FOREIGN KEY ("caseId") REFERENCES "Case"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "CaseExtraction" ADD CONSTRAINT "CaseExtraction_caseId_fkey" FOREIGN KEY ("caseId") REFERENCES "Case"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "CaseAttachment" ADD CONSTRAINT "CaseAttachment_caseId_fkey" FOREIGN KEY ("caseId") REFERENCES "Case"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "CrisisEvent" ADD CONSTRAINT "CrisisEvent_caseId_fkey" FOREIGN KEY ("caseId") REFERENCES "Case"("id") ON DELETE CASCADE ON UPDATE CASCADE;
