@@ -35,15 +35,15 @@
     "existingIntro": "Enter your case ID and secret to continue securely.",
     "caseIdPlaceholder": "SV-ABCDE-1234",
     "secretPlaceholder": "Secret",
-    "createFailed": "Unable to create case right now. Please try again.",
+    "createFailed": "Unable to create a report right now. Please try again in a moment.",
     "verifyFailed": "Verification failed. Please try again."
   },
   "errors": {
     "VERIFY_FAILED": "We could not verify those credentials.",
     "VERIFY_LOCKED": "Too many attempts. Please wait before trying again. If you saved your credentials, try again later.",
     "SESSION_EXPIRED": "Session expired. Please verify your case credentials again.",
-    "CASE_CREATE_FAILED": "Unable to create case right now. Please try again.",
-    "DATABASE_UNAVAILABLE": "Reporting storage is temporarily unavailable. Please try again later.",
+    "DATABASE_UNAVAILABLE": "Reporting storage is temporarily unavailable. Check DATABASE_URL and that migrations have been applied, then try again.",
+    "CASE_CREATE_FAILED": "Unable to create a report right now. Please try again in a moment.",
     "CASE_SUBMITTED": "This report has already been submitted.",
     "CASE_SUBMITTED_READONLY": "This report has been submitted and is read-only.",
     "CASE_NOT_FOUND": "Case not found",

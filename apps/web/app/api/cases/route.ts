@@ -1,6 +1,8 @@
 import {
     forceMemoryCaseStore,
+    isDatabaseConnectivityError,
     shouldFallbackToMemoryStore,
+    shouldReportDatabaseUnavailable,
 } from '@safevoices/prisma';
 import { createCaseResponseSchema } from '@safevoices/trpc';
 import {
@@ -32,18 +34,23 @@ export async function POST(): Promise<Response> {
             try {
                 return await createCaseBody();
             } catch (retryError) {
-                console.error('[api/cases] create failed after memory fallback', retryError);
+                console.error(
+                    '[api/cases] create failed after memory fallback',
+                    retryError,
+                );
                 return apiErrorResponse(API_ERROR_CODES.CASE_CREATE_FAILED, 500);
             }
         }
 
         console.error('[api/cases] create failed', error);
+
         if (
-            process.env.DATABASE_URL?.trim() &&
-            process.env.CASE_STORE?.trim() !== 'memory'
+            shouldReportDatabaseUnavailable(error) ||
+            isDatabaseConnectivityError(error)
         ) {
             return apiErrorResponse(API_ERROR_CODES.DATABASE_UNAVAILABLE, 503);
         }
+
         return apiErrorResponse(API_ERROR_CODES.CASE_CREATE_FAILED, 500);
     }
 }
