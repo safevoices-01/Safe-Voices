@@ -121,7 +121,8 @@ export function parseChatRequestBody(
 export function missingGatewayKeyResponse(): Response {
     return Response.json(
         {
-            error: 'Missing AI_GATEWAY_API_KEY. Add it to the app environment (see apps/web/.env.example or apps/api/.env.example) and restart.',
+            code: 'CHAT_UNAVAILABLE',
+            error: 'CHAT_UNAVAILABLE',
         },
         { status: 503 },
     );
@@ -145,7 +146,10 @@ export async function createChatStreamResponse(
     options: ChatStreamOptions = {},
 ): Promise<Response> {
     if (process.env.SAFEVOICES_CHAT_DISABLED === 'true') {
-        return Response.json({ error: 'Chat is temporarily unavailable.' }, { status: 503 });
+        return Response.json(
+            { code: 'CHAT_DISABLED', error: 'CHAT_DISABLED' },
+            { status: 503 },
+        );
     }
     if (!process.env.AI_GATEWAY_API_KEY?.trim()) {
         return missingGatewayKeyResponse();

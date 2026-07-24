@@ -14,6 +14,7 @@ import { detectCrisisLanguage, type ReportingLocale } from '@safevoices/ai/repor
 import { LanguageSwitcher } from '../language-switcher';
 import { Link } from '../../i18n/navigation';
 import { translateApiError } from '../../lib/translate-api-error';
+import { resolveChatErrorCopyKey } from '../../lib/format-chat-error';
 import { decodeExtractionHeader } from '../../lib/decode-extraction-header';
 import { uploadEvidence, type UploadEvidenceResult } from '../../lib/evidence-upload';
 import {
@@ -41,6 +42,7 @@ import {
     PromptInputTextarea,
 } from '@safevoices/ui/components/prompt-input';
 import {
+    AlertCircle,
     ArrowUp,
     FileText,
     Home,
@@ -49,6 +51,7 @@ import {
     Shield,
     Square,
     User,
+    X,
 } from 'lucide-react';
 
 export type ChatExperienceMode = 'demo' | 'reporting';
@@ -568,16 +571,34 @@ export function ChatExperience({
                     </ChatContainerRoot>
 
                     {error ? (
-                        <div className="mt-3 rounded-2xl border border-destructive/32 bg-destructive/5 px-3 py-2 text-sm text-destructive-foreground">
-                            {error.message}
+                        <div
+                            role="alert"
+                            className="mt-3 flex items-start gap-3 rounded-2xl border border-amber-500/30 bg-amber-500/10 px-4 py-3 text-sm text-foreground"
+                        >
+                            <AlertCircle
+                                className="mt-0.5 size-5 shrink-0 text-amber-700 dark:text-amber-400"
+                                aria-hidden
+                            />
+                            <div className="min-w-0 flex-1 space-y-1">
+                                <p className="font-medium leading-snug">
+                                    {t('errorTitle')}
+                                </p>
+                                <p className="text-muted-foreground leading-snug">
+                                    {t(resolveChatErrorCopyKey(error))}
+                                </p>
+                            </div>
                             <Button
                                 type="button"
                                 variant="ghost"
                                 size="sm"
-                                className="ms-2"
+                                className="shrink-0"
                                 onClick={() => clearError()}
+                                aria-label={t('dismiss')}
                             >
-                                {t('dismiss')}
+                                <X className="size-4" aria-hidden />
+                                <span className="sr-only sm:not-sr-only sm:ms-1">
+                                    {t('dismiss')}
+                                </span>
                             </Button>
                         </div>
                     ) : null}
