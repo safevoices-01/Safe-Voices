@@ -42,55 +42,56 @@ runtime.
 
 ## Production (Supabase PostgreSQL)
 
-1. Create a Supabase project and copy the **transaction pooler** URI
-   (`postgresql://…@…pooler.supabase.com:6543/postgres?pgbouncer=true`).
-2. Set secrets on the hosting platform (`apps/web`):
+Vercel **web build** runs `db:migrate:deploy` automatically before `next build`
+(`apps/web` → `packages/prisma/scripts/migrate-deploy.mjs`).
+
+1. Create a Supabase project.
+2. Set secrets on Vercel (`apps/web` / Production):
 
 ```bash
-DATABASE_URL=postgresql://...
+# App runtime (transaction pooler)
+DATABASE_URL=postgresql://…@…pooler.supabase.com:6543/postgres?pgbouncer=true
+
+# Migrations during deploy (session pooler) — strongly recommended
+DIRECT_URL=postgresql://…@…pooler.supabase.com:5432/postgres
+
 SAFEVOICES_SECRET_PEPPER=<rotated-secret>
 ```
 
-3. Apply migrations **before** or as part of first deploy (from a machine that
-   can reach Supabase — use session-mode port `5432` if migrate fails on
-   `pgbouncer=true`):
+3. Deploy. The build will apply pending migrations. If only `DATABASE_URL`
+   (pooler) is set, the script rewrites `:6543` → `:5432` and strips
+   `pgbouncer=true` for migrate. Prefer setting `DIRECT_URL` explicitly.
+
+4. Verify after deploy:
 
 ```bash
 export DATABASE_URL="postgresql://…@…pooler.supabase.com:5432/postgres"
-pnpm --filter @safevoices/prisma exec prisma migrate deploy
+pnpm --filter @safevoices/prisma run db:migrate:status
 ```
-
-4. Verify:
-
-```bash
-pnpm --filter @safevoices/prisma exec prisma migrate status
-```
-
-5. Redeploy `apps/web` so the runtime uses the fixed Prisma client + adapter.
 
 ### Vercel checklist
 
 | Env var | Required |
 |---------|----------|
 | `DATABASE_URL` | Yes — Supabase **transaction pooler** (`:6543?pgbouncer=true`) |
+| `DIRECT_URL` | Strongly recommended — session pooler (`:5432`) for migrate-on-deploy |
 | `SAFEVOICES_SECRET_PEPPER` | Yes (non-dev value) |
 | `GOOGLE_GENERATIVE_AI_API_KEY` or `AI_GATEWAY_API_KEY` | Yes (chat) |
 | `CASE_STORE` | Leave unset |
 
-Before first traffic:
+Manual migrate (optional / recovery):
 
 ```bash
-# Prefer session mode (:5432) for migrate
-export DATABASE_URL="postgresql://…@…pooler.supabase.com:5432/postgres"
-pnpm --filter @safevoices/prisma exec prisma migrate deploy
+export DIRECT_URL="postgresql://…@…pooler.supabase.com:5432/postgres"
+pnpm --filter @safevoices/prisma run db:migrate:deploy
 ```
 
 If `POST /api/cases` returns `DATABASE_UNAVAILABLE` / 503:
 
 1. Confirm the Supabase project is **Active** (not paused).
 2. Re-copy the pooler URI and password (URL-encode special characters).
-3. Confirm migrate deploy succeeded (`prisma migrate status`).
-4. Redeploy `apps/web` after env changes.
+3. Confirm Vercel has `DATABASE_URL` (+ `DIRECT_URL`) and redeploy so migrate runs.
+4. Check build logs for `[prisma] Migrations applied.`
 
 ## Shared state across processes
 

@@ -15,5 +15,6 @@ jobs:
       - name: Deploy gate
         run: |
           echo "CI succeeded on main. Deploy apps/web via Vercel Git integration."
-          echo "Required production env: see .env.example and specs/feat-0024-security-operations/TECH.md"
+          echo "Web build runs prisma migrate deploy automatically (see packages/prisma/scripts/migrate-deploy.mjs)."
+          echo "Required production env: DATABASE_URL (pooler), DIRECT_URL (session :5432), plus .env.example / feat-0024."
           echo "Cron jobs: POST /api/internal/jobs/purge and /api/internal/jobs/orphan-uploads with CRON_SECRET"

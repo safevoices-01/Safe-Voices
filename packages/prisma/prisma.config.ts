@@ -1,11 +1,13 @@
 import { defineConfig } from 'prisma/config';
 
 /**
- * `prisma generate` only needs a valid URL shape (CI/Vercel builds may not
- * inject DATABASE_URL). Runtime and migrations must set the real URL.
+ * Prefer DIRECT_URL (session / migrate) over DATABASE_URL (pooler / runtime).
+ * `prisma generate` only needs a valid URL shape when neither is set (CI build).
+ * Runtime Prisma client still reads DATABASE_URL in src/client.ts.
  */
 const databaseUrl =
-    process.env.DATABASE_URL ??
+    process.env.DIRECT_URL?.trim() ||
+    process.env.DATABASE_URL?.trim() ||
     'postgresql://postgres:postgres@127.0.0.1:5432/safevoices?schema=public';
 
 export default defineConfig({
