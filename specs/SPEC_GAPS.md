@@ -38,6 +38,7 @@ Living index of known gaps between specs and implementation. Update this file wh
 |-----|------------|-------|
 | Submit email not wired | [0009](./feat-0009-case-submit-lifecycle/PRODUCT.md), [0013](./feat-0013-transactional-email/PRODUCT.md) | `sendCaseReceivedEmail` exists; anonymous MVP has no email |
 | Resend in production | [0013](./feat-0013-transactional-email/PRODUCT.md) | Partner OTP logs code in dev when Resend unset |
+| Supabase DATABASE_URL tenant | [0029](./feat-0029-case-create-reliability/PRODUCT.md) | Dev falls back to memory; fix pooler password/project for prod |
 
 ## Recently closed (feat-0028)
 

@@ -58,6 +58,7 @@ pnpm dev:web
 | 0026 | Image upload | [PRODUCT](./feat-0026-image-upload/PRODUCT.md) | [TECH](./feat-0026-image-upload/TECH.md) | Canonical; partial impl |
 | 0027 | Demo vs reporting chat routes | [PRODUCT](./feat-0027-demo-chat-routing/PRODUCT.md) | [TECH](./feat-0027-demo-chat-routing/TECH.md) | Complete |
 | 0028 | Message attachment linkage | [PRODUCT](./feat-0028-message-attachment-linkage/PRODUCT.md) | [TECH](./feat-0028-message-attachment-linkage/TECH.md) | Complete |
+| 0029 | Case create reliability | [PRODUCT](./feat-0029-case-create-reliability/PRODUCT.md) | [TECH](./feat-0029-case-create-reliability/TECH.md) | Complete |
 
 See [SPEC_GAPS.md](./SPEC_GAPS.md) for gap ownership and ship order.
 
