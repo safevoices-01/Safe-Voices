@@ -13,7 +13,7 @@
         "build": "prisma generate && tsc --noEmit",
         "lint": "tsc --noEmit",
         "typecheck": "tsc --noEmit",
-        "test": "node --import tsx --test src/case-lifecycle.test.ts src/memory-partner-store.test.ts src/jobs/purge.test.ts src/db-errors.test.ts",
+        "test": "node --import tsx --test src/case-lifecycle.test.ts src/memory-partner-store.test.ts src/jobs/purge.test.ts src/db-errors.test.ts src/crypto.test.ts",
         "prisma": "prisma",
         "db:generate": "prisma generate",
         "db:migrate": "prisma migrate dev",
