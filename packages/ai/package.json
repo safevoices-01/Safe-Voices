@@ -10,12 +10,13 @@
         "./reporting": "./src/reporting.ts"
     },
     "scripts": {
+        "test": "node --import tsx --test src/reporting.test.ts src/chat.test.ts",
         "build": "tsc --noEmit",
         "lint": "tsc --noEmit",
-        "typecheck": "tsc --noEmit",
-        "test": "node --import tsx --test src/reporting.test.ts"
+        "typecheck": "tsc --noEmit"
     },
     "dependencies": {
+        "@ai-sdk/google": "^3.0.100",
         "ai": "^6.0.158"
     },
     "devDependencies": {

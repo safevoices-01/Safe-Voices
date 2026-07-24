@@ -13,6 +13,8 @@ export function resolveChatErrorCopyKey(error: unknown): ChatErrorCopyKey {
     if (
         text.includes('invalid api key') ||
         text.includes('authentication failed') ||
+        text.includes('api key not valid') ||
+        text.includes('api_key_invalid') ||
         text.includes('unauthorized') ||
         /\b401\b/.test(text)
     ) {

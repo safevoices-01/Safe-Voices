@@ -1,5 +1,10 @@
 import { convertToModelMessages, streamText, type UIMessage } from 'ai';
-import { getChatModelId, getChatSystemPrompt, type ChatLocale } from './chat';
+import {
+    getChatModel,
+    getChatSystemPrompt,
+    hasChatProviderCredentials,
+    type ChatLocale,
+} from './chat';
 import {
     buildReportingSystemPrompt,
     detectCrisisLanguage,
@@ -151,7 +156,12 @@ export async function createChatStreamResponse(
             { status: 503 },
         );
     }
-    if (!process.env.AI_GATEWAY_API_KEY?.trim()) {
+    if (!hasChatProviderCredentials()) {
+        return missingGatewayKeyResponse();
+    }
+
+    const model = getChatModel();
+    if (!model) {
         return missingGatewayKeyResponse();
     }
 
@@ -174,7 +184,7 @@ export async function createChatStreamResponse(
         : { triggered: false, triggerType: null };
 
     const result = streamText({
-        model: getChatModelId(),
+        model,
         system: crisis.triggered
             ? `${system}\n\nThe user may be in immediate danger. Respond with brief safety-oriented guidance first. Do not continue investigative questions until safety is addressed.`
             : system,
