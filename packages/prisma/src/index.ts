@@ -7,6 +7,7 @@ export {
 export {
     isDatabaseConnectivityError,
     shouldFallbackToMemoryStore,
+    shouldReportDatabaseUnavailable,
 } from './db-errors';
 export { getPartnerStore, resetPartnerStoreForTests } from './get-partner-store';
 export { canTransitionCaseStatus, ALLOWED_STATUS_TRANSITIONS } from './case-lifecycle';

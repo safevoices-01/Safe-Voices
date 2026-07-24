@@ -3,6 +3,7 @@ import { describe, it } from 'node:test';
 import {
     isDatabaseConnectivityError,
     shouldFallbackToMemoryStore,
+    shouldReportDatabaseUnavailable,
 } from './db-errors';
 
 describe('db-errors', () => {
@@ -12,6 +13,19 @@ describe('db-errors', () => {
         );
         error.name = 'DriverAdapterError';
         assert.equal(isDatabaseConnectivityError(error), true);
+    });
+
+    it('detects missing relation / migration errors', () => {
+        assert.equal(
+            isDatabaseConnectivityError(
+                new Error('relation "Case" does not exist'),
+            ),
+            true,
+        );
+        assert.equal(
+            isDatabaseConnectivityError(new Error('P2021: table missing')),
+            true,
+        );
     });
 
     it('detects nested cause codes', () => {
@@ -51,6 +65,24 @@ describe('db-errors', () => {
             assert.equal(shouldFallbackToMemoryStore(error), false);
         } finally {
             process.env.NODE_ENV = prevNode;
+        }
+    });
+
+    it('reports database unavailable when DATABASE_URL is configured', () => {
+        const prevUrl = process.env.DATABASE_URL;
+        const prevStore = process.env.CASE_STORE;
+        process.env.DATABASE_URL = 'postgresql://localhost/test';
+        delete process.env.CASE_STORE;
+        try {
+            assert.equal(
+                shouldReportDatabaseUnavailable(new Error('anything')),
+                true,
+            );
+        } finally {
+            if (prevUrl === undefined) delete process.env.DATABASE_URL;
+            else process.env.DATABASE_URL = prevUrl;
+            if (prevStore === undefined) delete process.env.CASE_STORE;
+            else process.env.CASE_STORE = prevStore;
         }
     });
 });
