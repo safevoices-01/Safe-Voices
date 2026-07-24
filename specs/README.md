@@ -16,7 +16,8 @@ Specifications follow the **PRODUCT + TECH** pattern (`sample/feat-XXXX/`): each
 | Node 22+, pnpm 10 | Monorepo toolchain (`package.json`, `.github/workflows/ci.yml`) |
 | `pnpm install` | Install workspace dependencies |
 | `pnpm dev:web` | Next.js app on port 3000 (or next free port) |
-| `AI_GATEWAY_API_KEY` | Streaming AI chat (`packages/ai`) |
+| `AI_GATEWAY_API_KEY` | Streaming AI chat via Vercel Gateway (fallback) |
+| `GOOGLE_GENERATIVE_AI_API_KEY` | Streaming AI chat via Google Gemini (preferred when set) |
 | `SAFEVOICES_SECRET_PEPPER` | Production session/credential crypto (`packages/prisma/src/crypto.ts`) |
 | `DATABASE_URL` (optional) | Persistent cases; omit for in-memory dev store |
 
@@ -59,6 +60,7 @@ pnpm dev:web
 | 0027 | Demo vs reporting chat routes | [PRODUCT](./feat-0027-demo-chat-routing/PRODUCT.md) | [TECH](./feat-0027-demo-chat-routing/TECH.md) | Complete |
 | 0028 | Message attachment linkage | [PRODUCT](./feat-0028-message-attachment-linkage/PRODUCT.md) | [TECH](./feat-0028-message-attachment-linkage/TECH.md) | Complete |
 | 0029 | Case create reliability | [PRODUCT](./feat-0029-case-create-reliability/PRODUCT.md) | [TECH](./feat-0029-case-create-reliability/TECH.md) | Complete |
+| 0030 | Google Gemini chat provider | [PRODUCT](./feat-0030-gemini-chat-provider/PRODUCT.md) | [TECH](./feat-0030-gemini-chat-provider/TECH.md) | Complete |
 
 See [SPEC_GAPS.md](./SPEC_GAPS.md) for gap ownership and ship order.
 
