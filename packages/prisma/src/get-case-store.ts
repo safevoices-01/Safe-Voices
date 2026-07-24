@@ -21,6 +21,15 @@ export function getCaseStore(): CaseStore {
     return globalStore[caseStoreKey];
 }
 
+/** Force in-memory store for the rest of this process (dev fallback). */
+export function forceMemoryCaseStore(): void {
+    resetCaseStoreForTests();
+    const globalStore = globalThis as typeof globalThis & {
+        [caseStoreKey]?: CaseStore;
+    };
+    globalStore[caseStoreKey] = new MemoryCaseStore();
+}
+
 export function resetCaseStoreForTests(): void {
     const globalStore = globalThis as typeof globalThis & {
         [caseStoreKey]?: CaseStore;

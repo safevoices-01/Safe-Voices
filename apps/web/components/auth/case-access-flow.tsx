@@ -90,9 +90,11 @@ export function CaseAccessFlow(): ReactElement {
         setError(null);
         try {
             const res = await fetch('/api/cases', { method: 'POST' });
-            const json = (await res.json()) as CreateCaseResponse | { error: string };
+            const json = (await res.json()) as
+                | CreateCaseResponse
+                | { code?: string; error?: string };
             if (!res.ok || !('caseId' in json)) {
-                setError(t('createFailed'));
+                setError(translateApiError(tErrors, json, t('createFailed')));
                 return;
             }
             setCreatedCase(json);

@@ -1,5 +1,13 @@
 export { getPrisma } from './client';
-export { getCaseStore, resetCaseStoreForTests } from './get-case-store';
+export {
+    getCaseStore,
+    forceMemoryCaseStore,
+    resetCaseStoreForTests,
+} from './get-case-store';
+export {
+    isDatabaseConnectivityError,
+    shouldFallbackToMemoryStore,
+} from './db-errors';
 export { getPartnerStore, resetPartnerStoreForTests } from './get-partner-store';
 export { canTransitionCaseStatus, ALLOWED_STATUS_TRANSITIONS } from './case-lifecycle';
 export type {
