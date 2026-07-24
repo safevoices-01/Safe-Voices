@@ -73,11 +73,22 @@ pnpm --filter @safevoices/prisma run db:migrate:status
 
 | Env var | Required |
 |---------|----------|
-| `DATABASE_URL` | Yes — Supabase **transaction pooler** (`:6543?pgbouncer=true`) |
-| `DIRECT_URL` | Strongly recommended — session pooler (`:5432`) for migrate-on-deploy |
+| `DATABASE_URL` | Yes — **Transaction** pooler (`:6543?pgbouncer=true`, user `postgres.<ref>`) |
+| `DIRECT_URL` | Yes for migrate — **Session** pooler (`:5432`) or **Direct** `db.<ref>.supabase.co` |
 | `SAFEVOICES_SECRET_PEPPER` | Yes (non-dev value) |
 | `GOOGLE_GENERATIVE_AI_API_KEY` or `AI_GATEWAY_API_KEY` | Yes (chat) |
 | `CASE_STORE` | Leave unset |
+
+Copy URLs from Supabase → **Connect** (not an old bookmark). Wrong `aws-0` /
+`aws-1` region or a paused project causes:
+
+`FATAL: (ENOTFOUND) tenant/user postgres.<ref> not found`
+
+Direct connection example (migrations-friendly):
+
+```bash
+DIRECT_URL="postgresql://postgres:YOUR_PASSWORD@db.YOUR_PROJECT_REF.supabase.co:5432/postgres?sslmode=require"
+```
 
 Manual migrate (optional / recovery):
 
