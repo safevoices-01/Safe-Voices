@@ -72,13 +72,25 @@ pnpm --filter @safevoices/prisma exec prisma migrate status
 
 | Env var | Required |
 |---------|----------|
-| `DATABASE_URL` | Yes (Postgres) |
-| `SAFEVOICES_SECRET_PEPPER` | Yes |
-| `AI_GATEWAY_API_KEY` | Yes (chat) |
+| `DATABASE_URL` | Yes — Supabase **transaction pooler** (`:6543?pgbouncer=true`) |
+| `SAFEVOICES_SECRET_PEPPER` | Yes (non-dev value) |
+| `GOOGLE_GENERATIVE_AI_API_KEY` or `AI_GATEWAY_API_KEY` | Yes (chat) |
 | `CASE_STORE` | Leave unset |
 
-If migrations are missing, `POST /api/cases` returns `500` /
-`CASE_CREATE_FAILED` (tables do not exist).
+Before first traffic:
+
+```bash
+# Prefer session mode (:5432) for migrate
+export DATABASE_URL="postgresql://…@…pooler.supabase.com:5432/postgres"
+pnpm --filter @safevoices/prisma exec prisma migrate deploy
+```
+
+If `POST /api/cases` returns `DATABASE_UNAVAILABLE` / 503:
+
+1. Confirm the Supabase project is **Active** (not paused).
+2. Re-copy the pooler URI and password (URL-encode special characters).
+3. Confirm migrate deploy succeeded (`prisma migrate status`).
+4. Redeploy `apps/web` after env changes.
 
 ## Shared state across processes
 
