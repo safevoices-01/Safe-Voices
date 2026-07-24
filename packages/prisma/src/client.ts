@@ -1,9 +1,27 @@
 import { PrismaPg } from '@prisma/adapter-pg';
 import { PrismaClient } from '@prisma/client';
+import { Pool } from 'pg';
 
 const globalForPrisma = globalThis as unknown as {
     prisma?: PrismaClient;
+    pgPool?: Pool;
 };
+
+function createPool(connectionString: string): Pool {
+    const needsSsl =
+        /supabase\.(co|com)/i.test(connectionString) ||
+        /sslmode=require/i.test(connectionString) ||
+        process.env.PGSSLMODE === 'require';
+
+    return new Pool({
+        connectionString,
+        // Serverless: keep the pool tiny; reuse across warm invocations.
+        max: Number(process.env.PG_POOL_MAX ?? '1') || 1,
+        idleTimeoutMillis: 10_000,
+        connectionTimeoutMillis: 10_000,
+        ssl: needsSsl ? { rejectUnauthorized: false } : undefined,
+    });
+}
 
 /**
  * Prisma 7 requires a driver adapter (or Accelerate URL).
@@ -28,7 +46,11 @@ export function getPrisma(): PrismaClient {
         );
     }
 
-    const adapter = new PrismaPg({ connectionString });
+    if (!globalForPrisma.pgPool) {
+        globalForPrisma.pgPool = createPool(connectionString);
+    }
+
+    const adapter = new PrismaPg(globalForPrisma.pgPool);
     globalForPrisma.prisma = new PrismaClient({
         adapter,
         log:
